@@ -1,4 +1,3 @@
-import "dotenv/config";
 import express from "express";
 import axios from "axios";
 
@@ -17,7 +16,8 @@ app.get("/", async (req, res) => {
       timezone: "auto"
     }
   });
-  res.render("index.ejs", {apiResponse: result.data.hourly.temperature_2m});
+  res.render("index.ejs", {apiResponse: result.data.hourly.temperature_2m[0]});
+  // console.log(result.data);
 });
 
 app.listen(port, () => {
