@@ -3,21 +3,35 @@ import axios from "axios";
 
 const app = express();
 const port = 3000;
-const weatherURL = "https://api.open-meteo.com/v1/forecast";
+const pokeURL = "https://pokeapi.co/api/v2";
+
+function capitalizeFirstLetter(val) {
+  return String(val).charAt(0).toUpperCase() + String(val).slice(1);
+};
+
+function abilitiesNotHidden(abilityList){
+  let shownAbilities = [];
+  for (let i = 0; i<abilityList.length; i++) {
+    if (abilityList[i].is_hidden) {
+      shownAbilities.push(abilityList[i])
+    }
+  }
+  return shownAbilities;
+};
 
 app.use(express.static("public"));
 
 app.get("/", async (req, res) => {
-  const result = await axios.get(weatherURL, {
-    params: {
-      latitude: 51.5,
-      longitude: -0.1,
-      hourly: "temperature_2m",
-      timezone: "auto"
-    }
+  const result = await axios.get(pokeURL + "/pokemon/6");
+  res.render("index.ejs", {
+    pokemonName: capitalizeFirstLetter(result.data.name),
+    pokemonHeight: result.data.height/10,
+    pokemonWeight: result.data.weight/10,
+    pokemonTypes: result.data.types,
+    pokemonSprite: result.data.sprites.other.home.front_default,
+    pokemonAbilities: abilitiesNotHidden(result.data.abilities)
   });
-  res.render("index.ejs", {apiResponse: result.data.hourly.temperature_2m[0]});
-  // console.log(result.data);
+  // console.log(abilitiesNotHidden(result.data.abilities)[0].ability.name);
 });
 
 app.listen(port, () => {
