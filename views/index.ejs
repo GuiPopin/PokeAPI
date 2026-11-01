@@ -7,25 +7,46 @@
 </head>
 <body>
     <h1>This is a pokedex website</h1>
-    <h3>Your chosen pokemon is <%= pokemonName %></h3>
-    <ul>
-        <li>Height: <%= pokemonHeight %> m</li>
-        <li>Weight: <%= pokemonWeight %> Kg</li>
-        <li>Types:
+
+    <% if (locals.error) {%>
+        <h2><%= error %></h2>
+        <form action="/" method="GET">
+            <button type="submit">Home Page</button>
+        </form>
+    <% } else {%>
+        <% if (locals.pokemonName) {%>
+            <form action="/submit" method="POST">
+                <input type="text" name="pokemon" placeholder="Pokemon Name or Id">
+                <input type="submit" value="Submit">
+            </form>
+            <h3>Your chosen pokemon is <%= pokemonName %></h3>
             <ul>
-                <% for (let i=0;i<locals.pokemonTypes.length;i++) {%>
-                    <li><%= pokemonTypes[i].type.name %></li>
-                <%}%>
+                <li>Height: <%= pokemonHeight %> m</li>
+                <li>Weight: <%= pokemonWeight %> Kg</li>
+                <li>Types:
+                    <ul>
+                        <% for (let i=0;i<locals.pokemonTypes.length;i++) {%>
+                            <li><%= pokemonTypes[i].type.name %></li>
+                        <%}%>
+                    </ul>
+                </li>
+                <li>Abilities:
+                    <ul>
+                        <% for (let k=0;k<locals.pokemonAbilities.length;k++) {%>
+                            <li><%= pokemonAbilities[k].ability.name %></li>
+                        <%}%>
+                    </ul>
+                </li>
             </ul>
-        </li>
-        <li>Abilities:
-            <ul>
-                <% for (let k=0;k<locals.pokemonAbilities.length;k++) {%>
-                    <li><%= pokemonAbilities[k].ability.name %></li>
-                <%}%>
-            </ul>
-        </li>
-    </ul>
-    <img src="<%= pokemonSprite %>" alt="pokemon">
+            <img src="<%= pokemonSprite %>" alt="pokemon">
+        <% } else { %>
+            <h2>Search for a Pokemon!</h2>
+            <form action="/submit" method="POST">
+                <input type="text" name="pokemon" placeholder="Pokemon Name or Id">
+                <input type="submit" value="Submit">
+            </form>
+        <% } %>
+    <% } %>
+
 </body>
 </html>
