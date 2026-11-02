@@ -9,6 +9,10 @@ function capitalizeFirstLetter(val) {
   return String(val).charAt(0).toUpperCase() + String(val).slice(1);
 };
 
+function normalizeText(text) {
+  return text.trim().toLowerCase().replaceAll(" ", "-");
+};
+
 function abilitiesNotHidden(abilityList){
   let shownAbilities = [];
   for (let i = 0; i<abilityList.length; i++) {
@@ -20,14 +24,22 @@ function abilitiesNotHidden(abilityList){
 };
 
 app.use(express.static("public"));
-app.use(express.urlencoded({ extended: true }));
 
 app.get("/", (req, res) => {
   res.render("index.ejs");
 });
 
-app.post("/submit", async (req, res) => {
-  const pokemonSearched = req.body.pokemon;
+app.get("/search", (req, res) => {
+  const pokemonSearched = normalizeText(req.query.pokemon || "");
+  if (!pokemonSearched) {
+    res.redirect("/");
+  } else {
+    res.redirect(`/pokemon/${pokemonSearched}`);
+  };
+});
+
+app.get("/pokemon/:name", async (req, res) => {
+  const pokemonSearched = normalizeText(req.params.name);
   try {
     const result = await axios.get(pokeURL + `/pokemon/${pokemonSearched}`);
     res.render("index.ejs", {
@@ -36,13 +48,18 @@ app.post("/submit", async (req, res) => {
       pokemonWeight: result.data.weight/10,
       pokemonTypes: result.data.types,
       pokemonSprite: result.data.sprites.other.home.front_default,
-      pokemonAbilities: abilitiesNotHidden(result.data.abilities)
+      pokemonAbilities: abilitiesNotHidden(result.data.abilities),
+      pokemonNumber: result.data.id,
+      pokemonStats: result.data.stats
     });
   } catch (error) {
-    console.error("Failed to make request:", error.message);
-    res.render("index.ejs", {error: `The pokemon ${pokemonSearched} does not exist!`});
+    if (error.response?.status === 404) {
+      res.status(404).render("index.ejs", {error: `The pokemon ${pokemonSearched} does not exist!`});
+    } else {
+      console.log(error.message)
+      res.status(500).render("index.ejs", {error: `It was not possible to access PokeAPI, try again later.`});
+    };
   };
-  // console.log(abilitiesNotHidden(result.data.abilities)[0].ability.name);
 });
 
 app.listen(port, () => {

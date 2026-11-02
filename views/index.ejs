@@ -2,31 +2,51 @@
 
 <main>
     <% if (locals.error) {%>
-        <h2><%= error %></h2>
+        <h2 class="message"><%= error %></h2>
     <% } else {%>
         <% if (locals.pokemonName) {%>
-            <h3>Your chosen pokemon is <%= pokemonName %></h3>
-            <ul>
-                <li>Height: <%= pokemonHeight %> m</li>
-                <li>Weight: <%= pokemonWeight %> Kg</li>
-                <li>Types:
-                    <ul>
-                        <% for (let i=0;i<locals.pokemonTypes.length;i++) {%>
-                            <li><%= pokemonTypes[i].type.name %></li>
-                        <%}%>
-                    </ul>
-                </li>
-                <li>Abilities:
-                    <ul>
-                        <% for (let k=0;k<locals.pokemonAbilities.length;k++) {%>
-                            <li><%= pokemonAbilities[k].ability.name %></li>
-                        <%}%>
-                    </ul>
-                </li>
-            </ul>
-            <img src="<%= pokemonSprite %>" alt="<%= pokemonName %>">
+            <article class="card">
+                <nav class="card-nav">
+                    <% if (locals.pokemonNumber>1) {%>
+                        <a class="nav-button" href="/pokemon/<%= pokemonNumber-1 %>">Previous</a>
+                    <% } %>
+                    <a class="nav-button" href="/pokemon/<%= pokemonNumber+1 %>">Next</a>
+                </nav>
+                <img class="card-sprite" src="<%= pokemonSprite %>" alt="<%= pokemonName %>">
+                <h2 class="card-title"><%= pokemonName %></h2>
+                <span class="card-number">#<%= pokemonNumber %></span>
+                <div class="types">
+                    <% for (let i=0;i<locals.pokemonTypes.length;i++) {%>
+                        <span class="type type-<%= pokemonTypes[i].type.name %>"><%= pokemonTypes[i].type.name %></span>
+                    <%}%>
+                </div>
+                <ul class="card-info">
+                    <li><span class="label">Height:</span> <%= pokemonHeight %> m</li>
+                    <li><span class="label">Weight:</span> <%= pokemonWeight %> Kg</li>
+                    <li><span class="label">Abilities:</span>
+                        <ul>
+                            <% for (let k=0;k<locals.pokemonAbilities.length;k++) {%>
+                                <li><%= pokemonAbilities[k].ability.name %></li>
+                            <%}%>
+                        </ul>
+                    </li>
+                </ul>
+                <section class="stats">
+                    <h3>Base Stats</h3>
+                    <% for (let j=0;j<locals.pokemonStats.length;j++) {%>
+                        <div class="stat">
+                            <span class="stat-name"><%= pokemonStats[j].stat.name %></span>
+                            <div class="stat-bar">
+                                <div class="stat-fill" style="width: <%= (pokemonStats[j].base_stat / 255 * 100) + '%' %>">
+                                    <span class="stat-value"><%= pokemonStats[j].base_stat %></span>
+                                </div>
+                            </div>
+                        </div>
+                    <% } %>
+                </section>
+            </article>
         <% } else { %>
-            <h2>Search for a Pokemon!</h2>
+            <h2 class="message">Search for a Pokemon!</h2>
         <% } %>
     <% } %>
 </main>

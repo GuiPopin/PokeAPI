@@ -4,12 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= locals.pokemonName || "Pokedex" %></title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/styles/main.css">
 </head>
 <body>
     <header>
-        <h1>This is a pokedex website</h1>
-        <form action="/submit" method="POST">
-            <input type="text" name="pokemon" placeholder="Pokemon Name or Id">
+        <h1>Pokedex</h1>
+        <form action="/search" method="GET">
+            <input type="text" name="pokemon" placeholder="Pokemon Name or Id" required>
             <input type="submit" value="Submit">
         </form>
     </header>
